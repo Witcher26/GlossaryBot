@@ -49,7 +49,7 @@ public class MainNews {
                             String description = news.select("description").text();
                             result = category + "\n" + title + "\n" + description + "\n" + link;
                         }
-                        // send response
+                        //send response
 
                         SendMessage request = new SendMessage(chatId, result);
 
