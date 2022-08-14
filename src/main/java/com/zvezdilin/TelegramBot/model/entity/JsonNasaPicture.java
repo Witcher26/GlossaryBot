@@ -1,17 +1,14 @@
 package com.zvezdilin.TelegramBot.model.entity;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.UpdatesListener;
 import com.pengrad.telegrambot.request.SendMessage;
 import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 
 import java.io.IOException;
 
-public class JSoupExchangeRate {
-
+public class JsonNasaPicture {
     public static void main(String[] args) throws IOException {
         System.out.println("Telegram bot");
 
@@ -22,19 +19,18 @@ public class JSoupExchangeRate {
                     System.out.println(upd);
                     long chatId = upd.message().chat().id();
                     String incomeMessage = upd.message().text();
-
                     //logic
-                    var date = "09/08/2022";
-                    String result = "";
-                    Document doc = Jsoup.connect("https://www.cbr.ru/scripts/XML_daily.asp?date_req=" + date).get();
-                    System.out.println(doc.title());
-                    Elements valutes = doc.select("Valute");
-                    for (Element valute : valutes) {
-                        if (valute.attr("ID").equals("R01235")) {
-                            result = valute.select("Value").text();
-                            System.out.println(result);
-                        }
-                    }
+                    String data = incomeMessage;
+                    String jsonString = Jsoup.connect("https://api.nasa.gov/planetary/apod?api_key=DEMO_KEY&date=" + data)
+                            .ignoreContentType(true)
+                            .execute()
+                            .body();
+                    ObjectMapper objectMapper = new ObjectMapper();
+                    var jsonNode = objectMapper.readTree(jsonString);
+                    String imageUrl = jsonNode.get("url").asText();
+                    String explanation = jsonNode.get("explanation").asText();
+                    String result = imageUrl + "\n" + explanation;
+
                     //send response
                     SendMessage request = new SendMessage(chatId, result);
                     bot.execute(request);
