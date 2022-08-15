@@ -21,6 +21,7 @@ public class Glossary {
                     long chatId = upd.message().chat().id();
                     String incomeMessage = upd.message().text();
 
+
                     //logic
                     String result = "";
                     if (incomeMessage.equalsIgnoreCase("/start") | incomeMessage.equalsIgnoreCase("старт")) {
